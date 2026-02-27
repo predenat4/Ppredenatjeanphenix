@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Boutique en ligne</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0f0f3d, #ff66cc);
+      color: #fff;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(0,0,0,0.4);
+    }
+    header h1 {
+      font-size: 2rem;
+      letter-spacing: 2px;
+    }
+    .cart-btn, .btn {
+      background: linear-gradient(90deg, #00ccff, #ff66cc);
+      border: none;
+      padding: 0.8rem 1.2rem;
+      border-radius: 8px;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .cart-btn:hover, .btn:hover {
+      background: linear-gradient(90deg, #ff66cc, #00ccff);
+    }
+    .products {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      padding: 2rem;
+    }
+    .product {
+      background: rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 1rem;
+      width: 250px;
+      text-align: center;
+      box-shadow: 0 0 15px rgba(255, 105, 180, 0.6);
+      transition: transform 0.3s ease;
+    }
+    .product:hover {
+      transform: scale(1.05);
+    }
+    .product img {
+      width: 100%;
+      border-radius: 8px;
+    }
+    #product-details {
+      display: none;
+      padding: 2rem;
+      text-align: center;
+    }
+    #product-details img {
+      width: 300px;
+      border-radius: 8px;
+    }
+    #cart {
+      display: none;
+      background: rgba(0,0,0,0.7);
+      padding: 1rem;
+      margin: 1rem;
+      border-radius: 8px;
+    }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background: rgba(0,0,0,0.4);
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Boutique en ligne</h1>
+    <button class="cart-btn" id="cart-btn">🛒 Panier (0)</button>
+  </header>
+
+  <!-- Liste des produits -->
+  <section class="products" id="products-list">
+    <div class="product">
+      <img src="produit1.jpg" alt="Produit 1">
+      <h2>Produit 1</h2>
+      <p>Prix: 10 €</p>
+      <button class="btn" onclick="showProduct(1)">Commander</button>
+    </div>
+
+    <div class="product">
+      <img src="produit2.jpg" alt="Produit 2">
+      <h2>Produit 2</h2>
+      <p>Prix: 15 €</p>
+      <button class="btn" onclick="showProduct(2)">Commander</button>
+    </div>
+
+    <div class="product">
+      <img src="produit3.jpg" alt="Produit 3">
+      <h2>Produit 3</h2>
+      <p>Prix: 20 €</p>
+      <button class="btn" onclick="showProduct(3)">Commander</button>
+    </div>
+  </section>
+
+  <!-- Détails produit -->
+  <main id="product-details">
+    <h2 id="product-name"></h2>
+    <img id="product-img" src="" alt="Produit">
+    <p id="product-price"></p>
+    <p id="product-description"></p>
+    <button class="btn" id="add-to-cart">Ajouter au panier</button>
+    <br><br>
+    <button class="btn" onclick="backToList()">⬅ Retour</button>
+  </main>
+
+  <!-- Panier -->
+  <section id="cart">
+    <h2>Votre panier</h2>
+    <ul id="cart-items"></ul>
+    <p id="total">Total: 0 €</p>
+    <button class="btn" onclick="emptyCart()">🗑 Vider le panier</button>
+  </section>
+
+  <footer>
+    <p>&copy; 2026 Boutique en ligne. Tous droits réservés.</p>
+  </footer>
+
+  <script>
+    const produits = {
+      1: { name: "Produit 1", price: 10, img: "produit1.jpg", description: "Description détaillée du produit 1." },
+      2: { name: "Produit 2", price: 15, img: "produit2.jpg", description: "Description détaillée du produit 2." },
+      3: { name: "Produit 3", price: 20, img: "produit3.jpg", description: "Description détaillée du produit 3." }
+    };
+
+    const cartBtn = document.getElementById('cart-btn');
+    const cartSection = document.getElementById('cart');
+    const cartItemsList = document.getElementById('cart-items');
+    const totalDisplay = document.getElementById('total');
+    const productDetails = document.getElementById('product-details');
+    const productsList = document.getElementById('products-list');
+    let cart = [];
+    let currentProduct = null;
+
+    function showProduct(id) {
+      const produit = produits[id];
+      currentProduct = produit;
+      document.getElementById('product-name').textContent = produit.name;
+      document.getElementById('product-img').src = produit.img;
+      document.getElementById('product-price').textContent = "Prix: " + produit.price + " €";
+      document.getElementById('product-description').textContent = produit.description;
+      productsList.style.display = 'none';
+      productDetails.style.display = 'block';
+    }
+
+    function backToList() {
+      productDetails.style.display = 'none';
+      productsList.style.display = 'flex';
+    }
+
+    document.getElementById('add-to-cart').addEventListener('click', () => {
+      if (currentProduct) {
+        cart.push(currentProduct);
+        updateCart();
+      }
+    });
+
+    cartBtn.addEventListener('click', () => {
+      cartSection.style.display = cartSection.style.display === 'none' ? 'block' : 'none';
+    });
+
+    function updateCart() {
+      cartBtn.textContent = `🛒 Panier (${cart.length})`;
+      cartItems
