@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Détails Produit</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Boutique en ligne</h1>
+    <button class="cart-btn" id="cart-btn">🛒 Panier (0)</button>
+  </header>
+
+  <main style="padding:2rem;">
+    <h2 id="product-name"></h2>
+    <img id="product-img" src="" alt="Produit" style="width:300px;border-radius:8px;">
+    <p id="product-price"></p>
+    <p id="product-description"></p>
+    <button class="btn" id="add-to-cart">Ajouter au panier</button>
+  </main>
+
+  <section id="cart" style="display:none; background:rgba(0,0,0,0.7); padding:1rem; margin:1rem; border-radius:8px;">
+    <h2>Votre panier</h2>
+    <ul id="cart-items"></ul>
+    <p id="total">Total: 0 €</p>
+  </section>
+
+  <footer>
+    <p>&copy; 2026 Boutique en ligne. Tous droits réservés.</p>
+  </footer>
+
+  <script>
+    const produits = {
+      1: { name: "Produit 1", price: 10, img: "produit1.jpg", description: "Description détaillée du produit 1." },
+      2: { name: "Produit 2", price: 15, img: "produit2.jpg", description: "Description détaillée du produit 2." },
+      3: { name: "Produit 3", price: 20, img: "produit3.jpg", description: "Description détaillée du produit 3." }
+    };
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+    const produit = produits[id];
+
+    const cartBtn = document.getElementById('cart-btn');
+    const cartSection = document.getElementById('cart');
+    const cartItemsList = document.getElementById('cart-items');
+    const totalDisplay = document.getElementById('total');
+    let cart = [];
+
+    if (produit) {
+      document.getElementById('product-name').textContent = produit.name;
+      document.getElementById('product-img').src = produit.img;
+      document.getElementById('product-price').textContent = "Prix: " + produit.price + " €";
+      document.getElementById('product-description').textContent = produit.description;
+
+      document.getElementById('add-to-cart').addEventListener('click', () => {
+        cart.push(produit);
+        updateCart();
+      });
+    }
+
+    cartBtn.addEventListener('click', () => {
+      cartSection.style.display = cartSection.style.display === 'none' ? 'block' : 'none';
+    });
+
+    function updateCart() {
+      cartBtn.textContent = `🛒 Panier (${cart.length})`;
+      cartItemsList.innerHTML = '';
+      let total = 0;
+
+      cart.forEach((item, index) => {
+        total += item.price;
+        const li = document.createElement('li');
+        li.textContent = `${item.name} - ${item.price} €`;
+
+        // Bouton retirer
+        const removeBtn = document.createElement('button');
+        removeBtn.textContent = "❌ Retirer";
+        removeBtn.style.marginLeft = "10px";
+        removeBtn.addEventListener('click', () => {
+          cart.splice(index, 1); // Retire l'article
+          updateCart(); // Met à jour le panier
+        });
+
+        li.appendChild(removeBtn);
+        cartItemsList.appendChild(li);
+      });
+
+      totalDisplay.textContent = `Total: ${total} €`;
+    }
+  </script>
+</body>
+</html>
